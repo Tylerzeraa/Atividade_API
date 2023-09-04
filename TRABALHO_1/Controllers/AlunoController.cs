@@ -1,13 +1,14 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using Aluno.Models.Request;
+using static TRABALHO_1.Controllers.PrincipalController;
 
 namespace Aluno.Controllers
 {
 
     [Route("api/[controller]")]
     [ApiController]
-    public class AlunoController : ControllerBase
+    public class AlunoController : PrincipalAlunoController
     {
         private readonly string _alunoCaminhoArquivo;
         private int codigo_ra;
@@ -63,9 +64,9 @@ namespace Aluno.Controllers
         [HttpPost]
         public IActionResult Post([FromBody] AlunoViewModel newAluno)
         {
-            if (newAluno == null)
+            if (!ModelState.IsValid)
             {
-                return BadRequest();
+                return ApiBadRequestResponse(ModelState);
             }
 
             List<AlunoViewModel> alunos = LerAlunosDoArquivo();
@@ -89,6 +90,8 @@ namespace Aluno.Controllers
 
             return CreatedAtAction(nameof(Get), new { codigo = novoAluno.RA }, novoAluno);
         }
+
+
 
         [HttpPut("{RA}")]
         public IActionResult Put(string RA, [FromBody] AlunoViewModel aluno)
